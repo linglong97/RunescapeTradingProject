@@ -7,10 +7,10 @@ In this project, my goal is quantitatively build a financial model of the Runesc
 In this project, Python and R will be used to process the data. Python will be used to create the model. A pseudo-java(using auto-it) will be used to create the bot that actually implements the model.
 
 # Accessing the Runescape API
-The first step is to take the data from the runescape website. Because there are only several relevant things, there are steps necessary in order to sift through the data.
+The first step is to take the data from the runescape website. Because there are only several relevant things, there are steps necessary in order to sift through the data. After going through all the data on the api, I realised that much of the data available on the site was unavailable through the API. As such, it became necessary to write additional code to manually sift through the website to obtain additional data, like volume of trading and different qualifiers about items.
 
 # Building the quantitative model
-Building the model itself is the most challenging part of the project. This will involve a deep understanding of the game economy and how it differs from the real economy, as different factors will affect the price of different items, even if the historical data would not normally suggest so.
+Building the model itself is the most challenging part of the project. This will involve a deep understanding of the game economy and how it differs from the real economy, as different factors will affect the price of different items, even if the historical data would not normally suggest so. Additionally, the model will need to be adjusted over time for game events/updates.
 
 # Building an AI to play the game and automatically trade
 After building a model, the AI will be made to automatically trade. Net profit and losses will be recorded and analysed to edit the model, and backtesting will also be implemented to verify the model.
