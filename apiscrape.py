@@ -11,7 +11,7 @@ import datetime
 import cycler
 import matplotlib.pyplot as plt
 import random
-
+import csv
 global base_url
 global url
 global database
@@ -23,6 +23,7 @@ base_url = 'http://services.runescape.com/m=itemdb_oldschool'
 lesser_url = '/api/catalogue/detail.json?item='
 url = base_url+lesser_url
 
+
 #convert the json file to a dict with item_ids as keys, and item names as values
 with open('fullitemlist.json') as file:
      database = json.load(file)
@@ -31,13 +32,11 @@ for item in database:
    name = item['id']
    new_database[name] = item['name']
 
-
 #gets the price of an item based on the item's id
 def get_price(item_id):
     with urllib.request.urlopen(url+item_id) as url:
         fulldata = json.loads(url.read().decode("utf-8"))
     return (fulldata['item']['current']['price'])    
-
 
 #open the api page that has the item_id
 def open_url():
@@ -105,11 +104,55 @@ def make_graph(item_id):
         plt.title('Historical Price data of'+' ' + new_database[item_id])
         plt.grid(True)
     plt.show()
-  
-  
+
+def pull_time_data(start, start1):
+    for item in range(start, start+10000):
+        start1 = item
+        if item in new_database:
+            print(get_item_from_id(item))
+            first = [get_item_from_id(item)]
+            end_url = '/api/graph/'+str(item)+'.json'
+            overall_url = base_url + end_url
+            try:
+                with urllib.request.urlopen(overall_url) as url:
+                    data = json.loads(url.read().decode("utf-8"))
+            except urllib.error.HTTPError as error:
+                print("got blocked by website, waiting 1s")
+                time.sleep(0.5)
+                pull_time_data(start1+1, start1+1)
+                # counter += 1
+                # if counter >= 500:
+                #     print("probably got ip banned by the site at item:" +str(item))
+                #     return(item) 
+                #     break
+                # except:
+                #     pass
+            except json.decoder.JSONDecodeError:    
+                print("Site wonky, waiting 1s")
+                time.sleep(1)
+                pull_time_data(start1+1, start1+1)
+            newdata = data['average']
+            
+            
+            
+            newlist = list(newdata.values())
+            newlist = first+newlist
+            try:
+                with open('historicaldata.csv', 'a', newline='') as csvfile:
+                    writer = csv.writer(csvfile, delimiter=',',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                    writer.writerow(newlist)
+            except PermissionError as error:
+                print("Close your Excel File!")
+            except TypeError as error2:
+                print("website has blocked us, waiting 120s")
+                time.sleep(120)
+                holder_index = i
+                print(start1)
+                return create_item_sheet(start1,start1)
   
 if __name__ == "__main__":
-    print('Hello World')
+    pull_time_data( 11105,11105)
   
   
   
